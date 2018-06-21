@@ -77,6 +77,9 @@ typedef struct {
 
 #ifdef IN_SHIM
 
+/*
+ * %fs points to __libc_tcb_t
+ */
 typedef struct
 {
     void *                  tcb, * dtv, * self;
@@ -89,6 +92,15 @@ typedef struct
 
 #include <stddef.h>
 
+/* @tatetian
+   On modifiers:
+ *  %q0 generates a quardword register out of the 0st argument, e.g., rcx.
+ *  %c1 generates a constant out of the 1st argument, e.g., $1234.
+ *
+ * On constraints:
+ *  "i" specifies that the input argument should be embedded in code as an
+ *  immediate value.
+ */
 #define SHIM_TLS_CHECK_CANARY()                                \
     ({ uint64_t __canary;                                      \
         asm ("movq %%fs:%c1,%q0" : "=r" (__canary)             \

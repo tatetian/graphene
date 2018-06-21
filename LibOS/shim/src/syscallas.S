@@ -28,6 +28,13 @@
         .extern shim_table, debug_unsupp
 
 
+/* @tatetian
+ * syscalldb function is a drop-in replacement for syscall instruction. 
+ *
+ * syscalldb uses the same calling convention as syscall: on x86-64, %rax is the 
+ * syscall number, and at most six arguments can be passed in %rsi, %rdi,%rdx, 
+ * %rcx, %r8 and %r9 registers.
+ */
 syscalldb:
         .cfi_startproc
 
@@ -43,6 +50,10 @@ syscalldb:
         cmp $LIBOS_SYSCALL_BOUND, %rax
         jae isundef
 
+/* @tateitan
+ * Points to symbol shim_table in a RIP relative way. This symbol is the system 
+ * call table with LIBOS_SYSCALL_BOUND entries. See shim_table.{h,c}.
+ */
         leaq shim_table(%rip), %rbx
         movq (%rbx,%rax,8), %rbx
         cmp $0, %rbx
